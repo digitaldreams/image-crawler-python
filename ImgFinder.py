@@ -9,7 +9,8 @@ class ImgFinder(HTMLParser):
         self.page_url = page_url
         self.base_url = urlres.netloc
         self.folder = functions.get_folder_name(urlres.netloc)
-        self.path = urlres.path
+        self.path = urlres.path.replace("/", "_")
+        self.scheme = urlres.scheme
         self.src = set()
         HTMLParser.__init__(self)
 
@@ -22,7 +23,7 @@ class ImgFinder(HTMLParser):
         if tag == 'img':
             for (attr, value) in attrs:
                 if attr == 'src':
-                    fullUrl = urllib.parse.urljoin(self.base_url, value)
+                    fullUrl = urllib.parse.urljoin(self.scheme + "://" + self.base_url, value)
                     self.src.add(fullUrl)
                 else:
                     continue
@@ -46,7 +47,7 @@ class ImgFinder(HTMLParser):
         Save waiting downloadable image to queue. So next time when program run
         :rtype: object
         """
-        file_name = self.folder_path() + self.path + '.txt'
+        file_name = self.folder_path() + "/" + self.path + '.txt'
         with open(file_name, 'w') as f:
             for line in sorted(self.src):
                 f.write(line + '\n')

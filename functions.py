@@ -32,6 +32,7 @@ def create_project_folder(page_url: object) -> object:
         os.makedirs("storage/" + base_url)
 
 
+# Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2228.0 Safari/537.36
 def html_string(page_url: object) -> object:
     """
     Fetch html from url and return as Html String
@@ -40,7 +41,9 @@ def html_string(page_url: object) -> object:
     """
     html_string = ''
     try:
-        response = urllib.request.urlopen(page_url)
+        request = urllib.request.Request(page_url, headers={
+            "User-Agent": "Mozilla/5.0 (X11; Linux i686) AppleWebKit/537.17 (KHTML, like Gecko) Chrome/24.0.1312.27 Safari/537.17"})
+        response = urllib.request.urlopen(request)
         if 'text/html' in response.getheader('Content-Type'):
             html_bytes = response.read()
             html_string = html_bytes.decode("utf-8")
@@ -59,5 +62,7 @@ def get_folder_name(base_url) -> object:
     parts = base_url.split(".")
     if len(parts) == 3:
         return parts[1]
+    elif len(parts) == 2:
+        return parts[0]
     else:
-        return parts.join("-")
+        return "-".join(parts)
