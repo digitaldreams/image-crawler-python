@@ -3,7 +3,7 @@ import urllib.parse
 import functions
 
 
-class ImgFinder(HTMLParser):
+class Finder(HTMLParser):
     def __init__(self, page_url):
         urlres = urllib.parse.urlparse(page_url)
         self.page_url = page_url

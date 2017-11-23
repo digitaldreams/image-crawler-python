@@ -1,8 +1,7 @@
-import urllib.parse
-import urllib.request
-import os.path
 import errno
-import SaveFile
+import os.path
+
+from Image import Save
 
 
 class Download():
@@ -32,7 +31,7 @@ class Download():
         """
         for file in self.links:
             try:
-                img = SaveFile.SaveFile(file, self.path)
+                img = Save.SaveFile(file, self.path)
                 img.save()
             except:
                 continue

@@ -2,7 +2,7 @@ import urllib.request
 import os.path
 
 
-class SaveFile:
+class Save:
     def __init__(self, file_name, path=''):
         """
         SaveFile Constructor
