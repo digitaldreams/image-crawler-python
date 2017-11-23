@@ -1,14 +1,14 @@
 import urllib.parse
 from Crawler.ImgFinder import ImgFinder
 import Models.Queue.Image
+import Models.Queue.Link
 
 
 class Image:
     def __init__(self, page_url):
 
-        image = Models.Queue.Image.Image
-        image.fetch()
-        self.image = image
+        self.image = Models.Queue.Image.Image()
+        self.link = Models.Queue.Link.Link()
 
         self.page_url = page_url
         urlres = urllib.parse.urlparse(page_url)
@@ -46,6 +46,8 @@ class Image:
     def save_links(self):
         self.fetch_links()
         self.save()
+        self.update_link()
 
-
-
+    def update_link(self):
+        self.link.remove(self.page_url)
+        self.link.save()

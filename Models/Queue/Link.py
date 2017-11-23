@@ -5,4 +5,5 @@ class Link(Model):
     file_path = 'storage/queue/links.txt'
 
     def __init__(self):
-        pass
+        Model.__init__(self)
+        self.fetch()

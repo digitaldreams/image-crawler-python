@@ -8,11 +8,7 @@ import Models.Queue.Link
 
 class Page:
     def __init__(self, page_url):
-
-        link = Models.Queue.Link.Link
-        link.fetch()
-        self.link = link
-
+        self.link = Models.Queue.Link.Link()
         self.page_url = page_url
         self.link.add(page_url)
         urlres = urllib.parse.urlparse(page_url)

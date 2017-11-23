@@ -4,54 +4,50 @@ import errno
 
 
 class Model:
-    links = set()
     file_path = ''
 
-    @classmethod
-    def fetch(cls):
+    def __init__(self):
+        self.links = set()
+
+    def fetch(self):
         """
             Load links from file and set to Set()
             :return: object
         """
-        cls.init_dir()
-        with open(cls.file_path, 'r') as f:
+        self.init_dir()
+        with open(self.file_path, 'r') as f:
             for line in f:
-                cls.links.add(line.replace('\n', ''))
-        return cls.links
+                self.links.add(line.replace('\n', ''))
+        return self.links
 
-    @classmethod
-    def save(cls):
+    def save(self):
         """
 
         :type links: object
         """
-        with open(cls.file_path, 'w') as f:
-            for line in sorted(cls.links):
+        with open(self.file_path, 'w') as f:
+            for line in sorted(self.links):
                 f.write(line + "\n")
         return True
 
-    @classmethod
-    def has(cls, link):
-        if not link in cls.links:
+    def has(self, link):
+        if not link in self.links:
             return False
         else:
             return True
 
-    @classmethod
-    def add(cls, link):
-        cls.links.add(link)
-        return cls
+    def add(self, link):
+        self.links.add(link)
+        return self
 
-    @classmethod
-    def remove(cls, link):
-        cls.links.discard(link)
-        return cls
+    def remove(self, link):
+        self.links.discard(link)
+        return self
 
-    @classmethod
-    def init_dir(cls):
-        dir_name = os.path.dirname(cls.file_path)
+    def init_dir(self):
+        dir_name = os.path.dirname(self.file_path)
         if not os.path.exists(dir_name):
             os.makedirs(dir_name)
-        if not os.path.isfile(cls.file_path):
-            with open(cls.file_path, 'w') as f:
+        if not os.path.isfile(self.file_path):
+            with open(self.file_path, 'w') as f:
                 f.write('')
