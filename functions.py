@@ -2,7 +2,7 @@ import os.path
 import urllib.parse
 import urllib.request
 
-from Image import Finder
+from Crawler import ImgFinder
 
 
 def gather_img_src(page_url) -> object:
@@ -13,7 +13,7 @@ def gather_img_src(page_url) -> object:
     """
     try:
         html = html_string(page_url)
-        finder = Finder.ImgFinder(page_url)
+        finder = ImgFinder.ImgFinder(page_url)
         finder.feed(html)
     except Exception as e:
         print(str(e))
