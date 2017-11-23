@@ -6,4 +6,4 @@ from UrlFinder import UrlFinder
 
 class LinkFinder(UrlFinder):
     def __init__(self, page_url):
-        super().__init__(self, page_url, 'a', 'href')
+        UrlFinder.__init__(self, page_url, 'a', 'href')

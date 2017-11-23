@@ -3,20 +3,31 @@ import urllib.parse
 import os.path
 import functions
 from Crawler.LinkFinder import LinkFinder
+import Models.Queue.Page
+import Models.Complete.Page
+import Models.Queue.Link
 
 
-class Spider:
-    domain = ''
-
+class Page:
     def __init__(self, page_url):
-        self.queue = set();
-        self.complete = set();
+        queue = Models.Queue.Page.Page
+        dir(queue)
+        queue.fetch()
+        self.queue = queue
+
+        complete = Models.Complete.Page.Page
+        complete.fetch()
+        self.complete = complete
+
+        link = Models.Queue.Link.Link
+        link.fetch()
+        self.link = link
+
         self.page_url = page_url
+        self.queue.add(page_url)
         urlres = urllib.parse.urlparse(page_url)
         self.base_url = urlres.netloc
         self.scheme = urlres.scheme
-        self.path = urlres.path.replace("/", "_")
-        self.folder = functions.get_folder_name(urlres.netloc)
         self.links = set()
 
     def add(self, link):
@@ -38,14 +49,24 @@ class Spider:
     def links(self):
         return self.links
 
+    def _merge_links(self):
+        for lk in self.links:
+            self.link.add(lk)
+        return self.link.links
+
     def queued(self):
-        return self.queue
+        return self.queue.links
 
     def completed(self):
-        self.complete
+        self.complete.links
 
-    def init_files(self):
-        pass
+    def save(self):
+        self.queue.save()
+
+    def save_links(self):
+        self.fetch_links()
+        self._merge_links()
+        self.link.save()
 
     def get_base_url(self) -> object:
         """
@@ -53,25 +74,6 @@ class Spider:
         :rtype: object
         """
         return self.base_url
-
-    def save_to_file(self) -> object:
-        """
-        Save waiting downloadable image to queue. So next time when program run
-        :rtype: object
-        """
-        file_name = self.folder_path() + "/" + self.path + '.txt'
-        with open(file_name, 'w') as f:
-            for line in sorted(self.src):
-                f.write(line + '\n')
-
-        return file_name
-
-    def folder_path(self) -> object:
-        """
-         Path to folder resource where images and others file will be saved for current domain relative to current folder
-        :return: object
-        """
-        return "storage/" + self.folder
 
     def sanitize_url(self, url):
         """
