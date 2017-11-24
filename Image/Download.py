@@ -1,51 +1,44 @@
 import errno
 import os.path
-
+import Models.Queue.Image
+import Models.Complete.Image
 from Image import Save
 
 
 class Download():
-    def __init__(self, file_name, path=''):
-        self.links = set()
-        self.completed = set()
-        self.file_name = file_name
-        self.file_to_set()
-        self.path = path
+    path = 'storage/images'
 
-    def file_to_set(self) -> object:
-        """
-        Load links from file and set to Set()
-        :return: object
-        """
-        if not os.path.exists(self.file_name):
-            raise FileNotFoundError(errno.ENOENT, os.strerror(errno.ENOENT), self.file_name)
-        with open(self.file_name, 'rt') as f:
-            for line in f:
-                self.links.add(line.replace('\n', ''))
-        return sorted(self.links)
+    def __init__(self, take=None):
+        self.queue = Models.Queue.Image.Image()
+        self.complete = Models.Complete.Image.Image()
+        self.limit = take
+        if not os.path.exists(self.path):
+            os.makedirs(self.path)
 
     def start(self) -> object:
         """
         Start Downloading file
         :rtype: object
         """
-        for file in self.links:
-            try:
-                img = Save.SaveFile(file, self.path)
-                img.save()
-            except:
-                continue
-            self.completed.add(file)
-        self.set_to_file()
+        if isinstance(self.limit, int) and len(self.queue.links) >= self.limit:
+            links = sorted(self.queue.links)[0:self.limit]
+        else:
+            links = self.queue.links
 
-    def set_to_file(self) -> object:
+        for file in links:
+            try:
+                img = Save.Save(file, self.path)
+                img.save()
+            except Exception as e:
+                print(str(e))
+            self.complete.add(file)
+        self.save()
+
+    def save(self) -> object:
         """
         Update links txt file
         :return : None
         """
-        remaining = self.links.difference(self.completed)
-        with open(self.file_name, 'w') as f:
-            if len(remaining) > 0:
-                for line in self.links:
-                    f.write(line + "\n")
-            f.write("")
+        self.queue.links = self.queue.links.difference(self.complete.links)
+        self.queue.save()
+        self.complete.save()
