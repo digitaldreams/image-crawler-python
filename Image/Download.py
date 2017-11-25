@@ -6,24 +6,31 @@ from Image import Save
 
 
 class Download():
-    path = 'storage/images'
+    folder = 'storage/'
 
-    def __init__(self, take=None):
+    def __init__(self, take=None, links=None, path="images"):
         self.queue = Models.Queue.Image.Image()
         self.complete = Models.Complete.Image.Image()
         self.limit = take
+        self.path = self.folder + path
+
         if not os.path.exists(self.path):
             os.makedirs(self.path)
+
+        if isinstance(links, set):
+            self.links = links
+        else:
+            self.links = self.queue.links
 
     def start(self) -> object:
         """
         Start Downloading file
         :rtype: object
         """
-        if isinstance(self.limit, int) and len(self.queue.links) >= self.limit:
-            links = sorted(self.queue.links)[0:self.limit]
+        if isinstance(self.limit, int) and len(self.links) >= self.limit:
+            links = sorted(self.links)[0:self.limit]
         else:
-            links = self.queue.links
+            links = self.links
 
         for file in links:
             try:
@@ -32,7 +39,7 @@ class Download():
             except Exception as e:
                 print(str(e))
             self.complete.add(file)
-        self.save()
+        return self
 
     def save(self) -> object:
         """
