@@ -1,13 +1,16 @@
-from queue import Queue
+from Crawler.Page import Page
+from Crawler.Image import Image
+from Image.Download import Download
 
-def do_stuff(q):
-  while not q.empty():
-    print(q.get())
-    q.task_done()
+if __name__ == '__main__':
+    page = Page('http://fdfashionltd.com');
+    # fetch all the links (anchor) of this website
+    links = page.fetch_links();
 
-q = Queue(maxsize=0)
-
-for x in range(20):
-  q.put(x)
-
-do_stuff(q)
+    for link in links:
+        # fetch all of the images of a web url
+        img = Image(link);
+        images = img.fetch_links();
+        # Download all of the images
+        download = Download(links=links)
+        download.start()
