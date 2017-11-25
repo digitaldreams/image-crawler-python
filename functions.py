@@ -60,6 +60,7 @@ def get_folder_name(base_url) -> object:
     :param base_url:
     :rtype: object
     """
+    base_url=urllib.parse.urlparse(base_url).netloc
     parts = base_url.split(".")
     if len(parts) == 3:
         return parts[1]
